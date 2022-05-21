@@ -3,4 +3,8 @@ project(custom_vector_class)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(custom_vector_class main.cpp)
+
+include_directories(src)
+add_subdirectory(src)
+add_subdirectory(gtest)
+add_subdirectory(lib/googletest)

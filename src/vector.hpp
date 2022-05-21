@@ -1,5 +1,4 @@
 #pragma once
-
 #include <memory>
 
 using namespace std;
@@ -14,48 +13,53 @@ public:
     typedef const size_t size_type;
     typedef T value_type;
 
-    // Default constructor
+    // Constructor. Constructs an empty Vector container
     Vector() { create(); }
 
-    explicit Vector(size_type n, const T &val = T{}) { create(n, val); }
+    // Use rule of three. Copy Constructor, Copy Assignment Operator, Destructor
 
+    // Fill empty Vector container with the 'size' number of 'val' copies
+    explicit Vector(size_type container_size, const T &val = T{}) { create (container_size, val); }
+
+    //  Copy Constructor
     Vector(const Vector &vector) {
         create(vector.begin(), vector.end());
     }
 
-    // Destructor
+    // Destructor. Deallocates memory and do other cleanup for a class object and its class members when the object is destroyed.
     ~Vector() { uncreate(); }
 
-    size_type size() const { return limit - data; }
 
     T &operator[](size_type i) { return data[i]; }
-
     const T &operator[](size_type i) const { return data[i]; }
 
+    // Iterator pointing at the beginning of the Vector
     iterator begin() { return data; };
-
     const_iterator begin() const { return data; }
 
-    iterator end() { return limit; }
+    // Iterator pointing at the end of the Vector
+    iterator end() { return avail; }
+    const_iterator end() const { return avail; }
 
-    const_iterator end() const { return limit; }
+    // Space allocated for the Vector class
+    size_type capacity() const { return limit - data; }
 
+    // Alternative to std::vector size() method
+    size_type size() const { return avail - data; }
 
-    Vector &operator=(const Vector &x) {
-        if (&x != this) {
-            uncreate();
-            create(x.begin(), x.end());
-        }
-
-        return *this;
-    }
-
+    // Alternative to std::vector push_back() method
     void push(const T &val) {
         if (avail == limit)
             grow();
         unchecked_append(val);
     }
 
+    // Alternative to std::vector pop_back() method
+    void pop() {
+        iterator new_avail = avail;
+        alloc.destroy(--new_avail);
+        avail = new_avail;
+    }
 
 private:
     iterator data;
@@ -94,12 +98,12 @@ private:
     void grow() {
         size_type new_size = max(2 * (limit - data), ptrdiff_t(1));
         iterator new_data = alloc.allocate(new_size);
-        iterator new_available = uninitialized_copy(data, avail, new_data);
+        iterator new_avail = uninitialized_copy(data, avail, new_data);
 
         uncreate();
 
         data = new_data;
-        avail = new_available;
+        avail = new_avail;
         limit = new_data + new_size;
     }
 
