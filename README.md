@@ -1,13 +1,5 @@
 # Custom Vector Class
 
-
-## Example methods
-- [.push_back()](#.push_back())
-- [.pop_back()](#.pop_back())
-- [.shrink_to_fit()](#.shrink_to_fit())
-- [.at()](#.at())
-- [.reserve()](#.reserve())
-
 ## Execution time
 
 Difference in the execution time between `std::vector` and `custom vector class` using `.push_back()`
