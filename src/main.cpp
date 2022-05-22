@@ -1,30 +1,41 @@
 #include <iostream>
+#include <vector>
 #include "vector.hpp"
 #include "timer.hpp"
 
-using namespace std;
+template<typename Container>
+void benchmark(bool customVector) {
+
+    Container v;
+    Timer clock;
+
+    double duration, totalDuration = 0;
+
+    int vectorSize[5] = {10000, 100000, 1000000, 10000000, 100000000};
+
+    std::cout << "Filling " << (customVector ? "custom vector class" : "std::vector") << "...\n";
+
+    for (int currentSize: vectorSize) {
+
+        for (int i = 0; i < currentSize; ++i)
+            v.push_back(i);
+
+        duration = clock.elapsed();
+        totalDuration += duration;
+
+        std::cout << "To push_back() " << currentSize << " elements it takes: " << duration << "s.\n";
+        clock.reset();
+        v.clear();
+
+    }
+    std::cout << "Total time: " << totalDuration << "s.\n";
+
+}
 
 int main() {
-    // initialize custom vector class
-//    Vector<int> myVector1(20);
-    Vector<int> myVector;
-//    myVector = {1,2,3};
-    cout << "Push elements into the vector:\n";
-    for (int i = 0; i < 20; ++i)
-        myVector.push(i);
 
-    for (auto i: myVector)
-        cout << i << " ";
-
-    cout << "\nPop elements out of the vector\n";
-    for (int i = 0; i < 5; ++i)
-        myVector.pop();
-
-    for (auto i: myVector)
-        cout << i << " ";
-
-
-    cout << "\nVector size is: " << myVector.size() << endl;
+    benchmark<std::vector<int>>(false);
+    benchmark<myVector<int>>(true);
 
     return 0;
 }
