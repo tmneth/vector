@@ -10,20 +10,25 @@ void benchmark(bool customVector) {
     Timer clock;
 
     double duration, totalDuration = 0;
+    int capacitySize = 0;
 
     int vectorSize[5] = {10000, 100000, 1000000, 10000000, 100000000};
 
     std::cout << "Filling " << (customVector ? "custom vector class" : "std::vector") << "...\n";
 
     for (int currentSize: vectorSize) {
-
-        for (int i = 0; i < currentSize; ++i)
+        capacitySize = 0;
+        for (int i = 0; i < currentSize; ++i) {
             v.push_back(i);
-
+            if (v.size() == v.capacity()) {
+                capacitySize++;
+            }
+        }
         duration = clock.elapsed();
         totalDuration += duration;
 
         std::cout << "To push_back() " << currentSize << " elements it takes: " << duration << "s.\n";
+        std::cout << "Number of times .capacity() = .size(): " << capacitySize << "\n";
         clock.reset();
         v.clear();
 
@@ -35,7 +40,7 @@ void benchmark(bool customVector) {
 int main() {
 
     benchmark<std::vector<int>>(false);
-    benchmark<myVector<int>>(true);
+    benchmark<MyVector<int>>(true);
 
     return 0;
 }
