@@ -9,12 +9,12 @@ Difference in the execution time between `std::vector` and `custom vector class`
 | std::vector    | 0.000168177s |  0.00106654s   |  0.0110924s   |   0.11851s  |  1.10713s   |    1.23796s   |
 | MyVector       | 0.000121105s  | 0.00114462s    |  0.0110208s   |  0.136773s   |  1.27128s   |    1.42034s   |
 
-Number of times .size() was equal to .capacity() 
+Number of times `.size()` was equal to `.capacity()`
 
-| Data Structure | 10000        | 100000      | 1000000    | 10000000  | 100000000 | Total |
-|----------------|--------------|-------------|------------|-----------|-----------|-------|
-| std::vector    | 14           | 3           | 3          | 4         | 3         | 27    |
-| MyVector       | 14 |  17| 20 | 24 | 27| 102   |
+| Data Structure | 10000        | 100000      | 1000000    | 10000000 | 100000000 |
+|----------------|--------------|-------------|------------|---------|----------|
+| std::vector    |14           | 17           | 20          | 24      | 27       |
+| MyVector       | 14 |  17| 20 | 24      |  27      |
 
 ## .push_back()
 
@@ -48,7 +48,7 @@ std::cout << "Vector capacity: " << example.capacity() << std::endl; // 8
 
 ```
 
-###        
+###           
 
 ## .pop_back()
 
@@ -76,7 +76,7 @@ std::cout << "Vector capacity: " << example.capacity() << std::endl; // 5
 
 ```
 
-###        
+###           
 
 ## .shrink_to_fit()
 
@@ -108,7 +108,7 @@ std::cout << "Vector capacity: " << example.capacity() << std::endl; // 5
 
 ```
 
-###        
+###           
 
 ## .at()
 
@@ -138,7 +138,7 @@ MyVector<int> example (10, 20);
 std::cout << "Element at 5th index is: " << MyVector.at(5) << std::endl; // 10
 ```
 
-###        
+###           
 
 ## .reserve()
 

@@ -6,18 +6,17 @@
 template<typename Container>
 void benchmark(bool customVector) {
 
-    Container v;
     Timer clock;
 
     double duration, totalDuration = 0;
-    int capacitySize = 0;
 
     int vectorSize[5] = {10000, 100000, 1000000, 10000000, 100000000};
 
     std::cout << "Filling " << (customVector ? "custom vector class" : "std::vector") << "...\n";
 
     for (int currentSize: vectorSize) {
-        capacitySize = 0;
+        Container v;
+        int capacitySize = 0;
         for (int i = 0; i < currentSize; ++i) {
             v.push_back(i);
             if (v.size() == v.capacity()) {
@@ -30,8 +29,6 @@ void benchmark(bool customVector) {
         std::cout << "To push_back() " << currentSize << " elements it takes: " << duration << "s.\n";
         std::cout << "Number of times .capacity() = .size(): " << capacitySize << "\n";
         clock.reset();
-        v.clear();
-
     }
     std::cout << "Total time: " << totalDuration << "s.\n";
 

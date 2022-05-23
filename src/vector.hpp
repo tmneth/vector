@@ -210,8 +210,12 @@ public:
 
 
     // Erases all elements from the container. After this call, size() returns zero.
-    void clear() { uncreate(); }
-
+    void clear() {
+        iterator it = avail;
+        while (it != data)
+            alloc.destroy(--it);
+        avail = data;
+    }
     // Appends the given element value to the end of the container.
     void push_back(const T &val) {
         if (avail == limit)
