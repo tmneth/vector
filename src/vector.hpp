@@ -31,18 +31,28 @@ public:
     // Fills empty Vector container with the 'size' number of 'val' copies
     explicit MyVector(size_type container_size, const T &val = T{}) { create(container_size, val); }
 
-    // Initializes Vector from an array
+    // Initializes Vector from a list.
     MyVector(const std::initializer_list<T> list) {
         create(list.begin(), list.end());
     }
 
-    // Copies Constructor
+    // Copy constructor.
     MyVector(const MyVector &v) {
         create(v.begin(), v.end());
     }
 
+    // Copy assignment operator. Replaces the contents with a copy of the contents of another.
+    MyVector &operator=(const MyVector &rhs) {
+        if (&rhs != this) {
+            uncreate();
+            create(rhs.begin(), rhs.end());
+        }
+        return *this;
+    }
+
 
     // Assignment operators
+
     void assign(size_type container_size, const T &val = T{}) {
         uncreate();
         create(container_size, val);
@@ -216,8 +226,16 @@ public:
             alloc.destroy(--it);
         avail = data;
     }
-    // Appends the given element value to the end of the container.
+
+    // Appends the given element value to the end of the container. The new element is initialized as a copy of value.
     void push_back(const T &val) {
+        if (avail == limit)
+            grow();
+        unchecked_append(val);
+    }
+
+    // Appends the given element value to the end of the container. Value is moved into the new element.
+    void push_back(T &&val) {
         if (avail == limit)
             grow();
         unchecked_append(val);
@@ -232,20 +250,34 @@ public:
 
     // Erases the specified elements from the container.
     iterator erase(iterator pos) {
-        try {
-            if (pos < data || pos > avail)
-                throw std::out_of_range("index is out of range");
-
-            iterator new_avail = std::uninitialized_copy(pos + 1, avail, pos);
-            alloc.destroy(avail + 1);
-
-            avail = new_avail;
-
-            return pos;
-        } catch (std::domain_error &e) {
-            std::cerr << "Terminate called after: " << e.what() << std::endl;
+        if (pos < data || pos > avail) {
+            throw std::out_of_range("Index out of range");
         }
+
+        iterator new_available = std::uninitialized_copy(pos + 1, avail, pos);
+        alloc.destroy(avail + 1);
+
+        avail = new_available;
+
+        return pos;
     }
+
+    iterator erase(iterator first, iterator last) {
+        if (first < data || last > avail) {
+            throw std::out_of_range("Index out of range");
+        }
+
+        iterator new_available = std::uninitialized_copy(last, avail, first);
+
+        iterator it = avail;
+        while (it != new_available) {
+            alloc.destroy(--it);
+        }
+
+        avail = new_available;
+        return last;
+    }
+
 
     // Inserts elements at the specified location in the container.
     void insert(const_iterator pos, const T &value) {
