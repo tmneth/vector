@@ -157,11 +157,11 @@ void reserve(size_type new_cap) {
 ```cpp
 MyVector<int> example (10, 5);
 
-std::cout << "The capacity of MyVector is: " << example.capacity() << std::endl; // 10
+std::cout << "The capacity of the vector is: " << example.capacity() << std::endl; // 10
 
 example.reserve(80);
 
-std::cout << "The capacity of MyVector is: " << example.capacity() << std::endl; // 80
+std::cout << "The capacity of the vector is: " << example.capacity() << std::endl; // 80
 ```
 
 ### Project Setup
