@@ -4,10 +4,10 @@
 
 Difference in the execution time between `std::vector` and `custom vector class` using `.push_back()`
 
-| Data Structure | 10000 | 100000    | 1000000    | 10000000   |  100000000   | Total |
+| Data Structure | 10000 | 100000    | 1000000    | 10000000   |  100000000  | Total |
 |----------------|-------|-----|-----|-----|-----|-------|
-| std::vector    | 0.000168177s |  0.00106654s   |  0.0110924s   |   0.11851s  |  1.10713s   |    1.23796s   |
-| MyVector       | 0.000121105s  | 0.00114462s    |  0.0110208s   |  0.136773s   |  1.27128s   |    1.42034s   |
+| std::vector    | 0.000174602s |  0.00123856s  | 0.0125634s   |   0.144284s |  1.37746s   |    1.53572s   |
+| MyVector       |  0.000134863s  | 0.00139039s    |  0.0136582s  |  0.166781s   |  1.58274s  |    1.76471s   |
 
 Number of times `.size()` was equal to `.capacity()`
 
@@ -15,6 +15,15 @@ Number of times `.size()` was equal to `.capacity()`
 |----------------|--------------|-------------|------------|---------|----------|
 | std::vector    |14           | 17           | 20          | 24      | 27       |
 | MyVector       | 14 |  17| 20 | 24      |  27      |
+
+
+Difference in the execution time between `std::vector` and `custom vector class` when processing file with `100000` students
+
+| Data Structure | Execution time | 
+|----------------|-------------|
+| std::vector    | 0.281469s   | 
+| MyVector       | 0.340181s   | 
+
 
 ## .push_back()
 
