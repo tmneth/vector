@@ -1,12 +1,12 @@
 #pragma once
 
+#include <iostream>
 #include <memory>
 #include <exception>
 #include <limits>
-#include <iostream>
+#include <cmath>
 
 template<class T>
-
 class MyVector {
 
 public:
@@ -20,28 +20,59 @@ public:
     typedef const value_type &const_reference;
     typedef std::allocator<T> allocator_type;
 
-    // Member functions (constructor, destructor, operator=, assign, get_allocator)
-
-    // Constructor. Constructs an empty MyVector container
+    /**
+     * @brief Construct a new Vector object.
+     */
     MyVector() { create(); }
 
-    // Destructor. Deallocates memory and do other cleanup when the object is destroyed
+    /**
+     * @brief Destroy the Vector object.
+     */
     ~MyVector() { uncreate(); }
 
-    // Fills empty Vector container with the 'size' number of 'val' copies
-    explicit MyVector(size_type container_size, const T &val = T{}) { create(container_size, val); }
+    /**
+     * @brief Construct a new Vector object
+     *
+     * @param n
+     * @param val
+     */
+    explicit MyVector(size_type n, const T &val = T{}) { create(n, val); }
 
-    // Initializes Vector from a list.
+    /**
+     * @brief List initializer.
+     *
+     * @param list
+     */
     MyVector(const std::initializer_list<T> list) {
         create(list.begin(), list.end());
     }
 
-    // Copy constructor.
+    /**
+     * @brief Copy constructor.
+     *
+     * @param v Source object.
+     */
     MyVector(const MyVector &v) {
         create(v.begin(), v.end());
     }
 
-    // Copy assignment operator. Replaces the contents with a copy of the contents of another.
+    /**
+     * @brief Move constructor.
+     *
+     * @param v
+     */
+    MyVector(MyVector &&v) noexcept {
+        create(v.begin(), v.end());
+        v.swap(*this);
+    }
+
+    /**
+     * @brief Copy assignment operator. Replaces the contents with a copy of the
+     * contents of other.
+     *
+     * @param rhs Container to use as a data source.
+     * @return MyVector&
+     */
     MyVector &operator=(const MyVector &rhs) {
         if (&rhs != this) {
             uncreate();
@@ -50,30 +81,42 @@ public:
         return *this;
     }
 
-
-    // Assignment operators
-
-    void assign(size_type container_size, const T &val = T{}) {
+    /**
+    * @brief Replaces the contents with count copies of value value.
+    *
+    * @param n
+    * @param val
+    */
+    void assign(size_type n, const T &val = T{}) {
         uncreate();
-        create(container_size, val);
+        create(n, val);
     }
 
+    /**
+    * @brief Replaces the contents with the elements from the initializer list.
+    *
+    * @param list
+    */
     void assign(std::initializer_list<value_type> list) {
         uncreate();
         create(list.begin(), list.end());
     }
 
-
-    // Returns the allocator associated with the container.
+    /**
+    * @brief Returns the allocator associated with the container.
+    *
+    * @return allocator_type Returns allocator object.
+    */
     allocator_type get_allocator() const { return alloc; };
 
+    // Element access  functions.
 
-
-    // Element access  functions (at, operator[], front, back)
-
-
-
-    // Returns a reference to the element at specified location pos. Bounds checking is performed.
+    /**
+    * @brief Returns a reference to the element at specified location pos, with bounds checking.
+    *
+    * @param index
+    * @return data[index]
+    */
     reference at(size_type index) {
         try {
             if (index >= size() || index < 0)
@@ -86,7 +129,6 @@ public:
         };
     }
 
-    // Returns a reference to the element at specified location pos. Bounds checking is performed.
     const_reference at(size_type index) const {
         try {
             if (index >= size() || index < 0)
@@ -99,7 +141,12 @@ public:
         };
     }
 
-    // Returns a reference to the element at specified location pos. Bounds checking is performed.
+    /**
+    * @brief Returns a reference to the element at specified location pos, with bounds checking.
+    *
+    * @param index
+    * @return data[index]
+    */
     T &operator[](size_type index) {
         try {
             if (index >= size() || index < 0)
@@ -112,7 +159,6 @@ public:
         };
     }
 
-    // Returns a reference to the element at specified location pos. Bounds checking is performed.
     const T &operator[](size_type index) const {
         try {
             if (index >= size() || index < 0)
@@ -125,71 +171,81 @@ public:
         };
     }
 
-    // Returns a reference to the first element in the container.
+    /**
+    * @brief Returns a reference to the first element in the container.
+    *
+    * @return *data
+    */
     reference front() { return *data; }
 
     const_reference front() const { return *data; }
 
-    // Returns a reference to the last element in the container.
+    /**
+    * @brief Returns a reference to the last element in the container.
+    *
+    * @return *(avail - 1)
+    */
     reference back() { return *(avail - 1); }
 
     const_reference back() const { return *(avail - 1); }
 
+    // Iterators.
 
-
-    // Iterators (begin, end, rbegin, rend)
-
-
-
-    // Returns an iterator to the first element of the vector.
     iterator begin() { return data; };
 
     const_iterator begin() const { return data; };
 
     const_iterator cbegin() const { return data; }
 
-    // Returns an iterator to the element following the last element of the vector.
     iterator end() { return avail; }
 
     const_iterator end() const { return avail; };
 
     const_iterator cend() const { return avail; }
 
-    // Returns a reverse iterator to the first element of the reversed vector.
-    // It corresponds to the last element of the non-reversed vector.
     reverse_iterator rbegin() { return reverse_iterator(avail); }
 
     const_reverse_iterator rbegin() const { return reverse_iterator(avail); }
 
     const_reverse_iterator crbegin() const { return reverse_iterator(avail); }
 
-    // Returns a reverse iterator to the element following the last element of the reversed vector.
-    // It corresponds to the element preceding the first element of the non-reversed vector.
     reverse_iterator rend() { return reverse_iterator(data); }
 
     const_reverse_iterator rend() const { return reverse_iterator(data); }
 
     const_reverse_iterator crend() const { return reverse_iterator(data); }
 
+    //  Capacity.
 
-
-    //  Capacity (empty, size, max_size, reserve, capacity, shrink_to_fit)
-
-
-
-    // Checks if the container has no elements, i.e. whether begin() == end(), !size.
+    /**
+    * @brief Checks if the container has no elements, i.e. whether begin() == end().
+    *
+   * @return true
+   * @return false
+    */
     bool empty() { return begin() == end(); }
 
-    // Returns the number of elements in the container, i.e. std::distance(begin(), end()).
+    /**
+    * @brief Returns the number of elements in the container, i.e. std::distance(begin(), end()).
+    *
+   * @return size_type
+    */
     size_type size() const { return avail - data; }
 
-    // Returns the maximum number of elements the container is able to hold.
-    // https://stackoverflow.com/questions/7949486/how-is-max-size-calculated-in-the-function-max-size-in-stdlist
+    /**
+    * @brief Returns the maximum number of elements the container is able to hold due to system or library implementation limitations.
+    *
+    * @return size_type
+    */
     size_type max_size() const {
-        return std::numeric_limits<size_type>::max();
+        return pow(2, sizeof(void *) * 8) / sizeof(T) - 1;
     }
 
-    // Increases the capacity of the vector.
+    /**
+    * @brief Increase the capacity of the vector (the total number of elements that the vector can hold without requiring reallocation).
+    *
+    * @param new_cap
+    */
     void reserve(size_type new_cap) {
         try {
             if (new_cap > max_size())
@@ -201,25 +257,38 @@ public:
         };
     }
 
-    // Returns the number of elements that the container has currently allocated space for.
+    /**
+    * @brief Returns the number of elements that the container has currently allocated space for.
+    *
+    * @return size_type
+    */
     size_type capacity() const { return limit - data; }
 
-    // Requests the removal of unused capacity.
+    /**
+    * @brief Requests the removal of unused capacity.
+    *
+    * @return size_type
+    */
     void shrink_to_fit() {
         if (limit > avail)
             limit = avail;
     }
 
-    value_type *access_data() {
+    /**
+     * @brief Return pointer to the underlying array.
+     *
+     * @return T*
+     */
+    T *access_data() {
         return data;
     }
 
 
-    // Modifiers (clear, insert, erase, push_back, pop_back, resize, swap)
+    // Modifiers.
 
-
-
-    // Erases all elements from the container. After this call, size() returns zero.
+    /**
+     * @brief Erases all elements from the container. After this call, size() returns zero.
+     */
     void clear() {
         iterator it = avail;
         while (it != data)
@@ -227,33 +296,50 @@ public:
         avail = data;
     }
 
-    // Appends the given element value to the end of the container. The new element is initialized as a copy of value.
+    /**
+     * @brief Appends the given element value to the end of the container. The new
+     * element is initialized as a copy of value.
+     *
+     * @param val Value to append.
+     */
     void push_back(const T &val) {
         if (avail == limit)
             grow();
         unchecked_append(val);
     }
 
-    // Appends the given element value to the end of the container. Value is moved into the new element.
+    /**
+    * @brief Appends the given element value to the end of the container. Value
+    * is moved into the new element.
+    *
+    * @param val
+    */
     void push_back(T &&val) {
         if (avail == limit)
             grow();
         unchecked_append(val);
     }
 
-    // Removes the last element of the container.
+    /**
+    * @brief Removes the last element of the container.
+    */
     void pop_back() {
         iterator new_avail = avail;
         alloc.destroy(--new_avail);
         avail = new_avail;
     }
 
-    // Erases the specified elements from the container.
+    /**
+     * @brief Removes the element at pos.
+     *
+     * @param pos
+     *
+     * @return iterator
+     */
     iterator erase(iterator pos) {
         if (pos < data || pos > avail) {
             throw std::out_of_range("Index out of range");
         }
-
         iterator new_available = std::uninitialized_copy(pos + 1, avail, pos);
         alloc.destroy(avail + 1);
 
@@ -262,6 +348,14 @@ public:
         return pos;
     }
 
+    /**
+    * @brief Removes the elements in the range [first, last).
+    *
+    * @param first
+    * @param last
+    *
+    * @return iterator
+    */
     iterator erase(iterator first, iterator last) {
         if (first < data || last > avail) {
             throw std::out_of_range("Index out of range");
@@ -278,39 +372,53 @@ public:
         return last;
     }
 
+    /**
+     * @brief Inserts n copies of the val before position.
+     *
+     * @param position Iterator before which the content will be inserted.
+     * @param n Number of elements to insert
+     * @param val Element value to insert
+     * @return iterator
+     */
+    iterator insert(iterator position, size_type n, const value_type &val) {
+        if (position < begin() || position >= end()) {
+            throw std::out_of_range("Index out of range");
+        }
 
-    // Inserts elements at the specified location in the container.
-    void insert(const_iterator pos, const T &value) {
-        try {
-            if (pos < data || pos >= avail)
-                throw std::out_of_range{"insert is out of range"};
-            int pos_integer = 0;
-            for (iterator i = data; i < pos; i++)
-                pos_integer++;
+        if (avail + n >= limit) {
+            size_type index = position - begin();
+            grow();
+            position = begin() + index;
+        }
 
-            size_type new_size = size() + 1;
-            iterator new_data = alloc.allocate(new_size);
-            iterator new_avail = std::uninitialized_copy(data, avail + 1, new_data);
+        int i = 0;
+        for (iterator it(avail + n - 1); it != (position + n - 1); it--, i++) {
+            *it = data[size() - i - 1];
+        }
 
-            new_data[pos_integer] = value;
-            int after_pos = pos_integer + 1;
-            int new_last = size() + 1;
+        std::uninitialized_fill(position, position + n, val);
+        avail += n;
 
-            for (int i = after_pos; i < new_last; i++)
-                new_data[i] = data[i - 1];
-
-            uncreate();
-            data = new_data;
-            avail = new_avail;
-            limit = data + new_size;
-
-        } catch (std::domain_error &e) {
-            std::cerr << "Terminate called after: " << e.what() << std::endl;
-        };
+        return position;
     }
 
+    /**
+     * @brief Insert a single element.
+     *
+     * @param position Iterator before which the content will be inserted.
+     * @param val Element value to insert.
+     * @return iterator.
+     */
+    iterator insert(iterator position, const value_type &val) {
+        return insert(position, 1, val);
+    }
 
-    // Exchanges the contents of the container with those of other.
+    /**
+     * @brief Exchanges the contents of the container with those of other.
+      Does not invoke any move, copy, or swap operations on individual elements.
+     *
+     * @param other
+     */
     void swap(MyVector<T> &other) {
         iterator temp = data;
         data = other.data;
@@ -325,16 +433,32 @@ public:
         other.limit = temp;
     }
 
-    // Checks if the contents of lhs and rhs are equal, that is, they have the same number of elements and each element
-    // in lhs compares equal with the element in rhs at the same position.
+    /**
+     * @brief Resizes the container to contain n elements.
+     *
+     * @param n
+     */
+    void resize(size_type n) {
+        if (n < size()) {
+            avail = data + n;
+            iterator it = limit;
+            while (it != avail) {
+                alloc.destroy(--it);
+            }
+        } else if (n > capacity()) {
+            grow();
+            resize(n);
+        } else if (n > size()) {
+            avail += n - size();
+        }
+    }
+
 
     bool operator==(const MyVector<T> &rhs) const {
         return size() == rhs.size() && std::equal(begin(), end(), rhs.begin());
     }
 
     bool operator!=(const MyVector<T> &rhs) { return !(*this == rhs); }
-
-    // Compares the contents of lhs and rhs lexicographically. The comparison is performed by a function equivalent to std::lexicographical_compare.
 
     bool operator<(const MyVector<T> &rhs) {
         return std::lexicographical_compare(begin(), end(), rhs.begin(), rhs.end());
@@ -347,7 +471,6 @@ public:
     bool operator<=(const MyVector<T> &rhs) { return !(*this > rhs); }
 
     bool operator>=(const MyVector<T> &rhs) { return !(*this < rhs); }
-
 
 private:
     iterator data;
@@ -395,7 +518,6 @@ private:
         limit = new_data + new_size;
     }
 
-    // Insert new element at the end
     void unchecked_append(const T &value) {
         alloc.construct(avail++, value);
     }
