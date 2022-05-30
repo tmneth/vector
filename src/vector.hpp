@@ -31,7 +31,7 @@ public:
     ~MyVector() { uncreate(); }
 
     /**
-     * @brief Construct a new Vector object
+     * @brief Construct a new Vector object.
      *
      * @param n
      * @param val
@@ -115,7 +115,7 @@ public:
     * @brief Returns a reference to the element at specified location pos, with bounds checking.
     *
     * @param index
-    * @return data[index]
+    * @return reference
     */
     reference at(size_type index) {
         try {
@@ -145,7 +145,7 @@ public:
     * @brief Returns a reference to the element at specified location pos, with bounds checking.
     *
     * @param index
-    * @return data[index]
+    * @return T&
     */
     T &operator[](size_type index) {
         try {
@@ -174,19 +174,29 @@ public:
     /**
     * @brief Returns a reference to the first element in the container.
     *
-    * @return *data
+    * @return reference
     */
     reference front() { return *data; }
 
+    /**
+    * @brief Returns a reference to the first element in the container.
+    *
+    * @return const_reference
+    */
     const_reference front() const { return *data; }
 
     /**
     * @brief Returns a reference to the last element in the container.
     *
-    * @return *(avail - 1)
+    * @return reference
     */
     reference back() { return *(avail - 1); }
 
+    /**
+    * @brief Returns a reference to the last element in the container.
+    *
+    * @return const_reference
+    */
     const_reference back() const { return *(avail - 1); }
 
     // Iterators.

@@ -4,15 +4,13 @@
 #include "timer.hpp"
 
 template<typename Container>
-void benchmark(bool customVector) {
+void benchmark() {
 
     Timer clock;
 
     double duration, totalDuration = 0;
 
     int vectorSize[5] = {10000, 100000, 1000000, 10000000, 100000000};
-
-    std::cout << "Filling " << (customVector ? "custom vector class" : "std::vector") << "...\n";
 
     for (int currentSize: vectorSize) {
         Container v;
@@ -36,8 +34,10 @@ void benchmark(bool customVector) {
 
 int main() {
 
-    benchmark<std::vector<int>>(false);
-    benchmark<MyVector<int>>(true);
+    std::cout << "Filling std::vector...\n";
+    benchmark<std::vector<int>>();
+    std::cout << "Filling custom vector class...\n";
+    benchmark<MyVector<int>>();
 
     return 0;
 }
