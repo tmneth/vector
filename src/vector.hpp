@@ -350,10 +350,10 @@ public:
         if (pos < data || pos > avail) {
             throw std::out_of_range("Index out of range");
         }
-        iterator new_available = std::uninitialized_copy(pos + 1, avail, pos);
+        iterator new_avail = std::uninitialized_copy(pos + 1, avail, pos);
         alloc.destroy(avail + 1);
 
-        avail = new_available;
+        avail = new_avail;
 
         return pos;
     }
@@ -371,14 +371,14 @@ public:
             throw std::out_of_range("Index out of range");
         }
 
-        iterator new_available = std::uninitialized_copy(last, avail, first);
+        iterator new_avail = std::uninitialized_copy(last, avail, first);
 
         iterator it = avail;
-        while (it != new_available) {
+        while (it != new_avail) {
             alloc.destroy(--it);
         }
 
-        avail = new_available;
+        avail = new_avail;
         return last;
     }
 
